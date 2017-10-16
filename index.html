@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Redux example</title>
+    <script src="https://unpkg.com/redux@latest/dist/redux.min.js"></script>
+  </head>
+  <body>
+    <h1 id="header">Header</h1>
+    <form id="change-header-form">
+        <input id="new-header" type="text" placeholder="change header" />
+        <input type="submit" value="change" />
+    </form>
+    
+    <p>Header no: <span id="header-number">0</span></p>
+    
+    <script>
+            
+    function counter(state, action) { 
+        if (typeof state === 'undefined') { 
+            return 0; 
+        } 
+        switch (action.type) {
+            case 'INCREMENT':
+                return state + 1
+            default:
+                return state
+        }
+    }
+
+    function changeHeader(state, action) {
+        if (typeof state === 'undefined') {
+            return '[give me some text]';
+        }
+        switch (action.type) {
+            case 'CHANGE_HEADER':
+                return document.getElementById('new-header').value;
+            default:
+                return state
+        }
+    }
+        
+    const apka = Redux.combineReducers({
+        changeHeader,
+        counter
+    });
+        
+    var store = Redux.createStore(apka);
+    var header = document.getElementById('header');
+    var newHeaderText = document.getElementById('new-header');
+    var counter = document.getElementById('header-number');
+    
+    function render() {
+        header.innerHTML = store.getState().changeHeader.toString()
+        counter.innerHTML = store.getState().counter.toString();
+    }
+        
+    render();
+    store.subscribe(render);
+
+    var changeHeaderForm = document.getElementById('change-header-form')
+        
+    changeHeaderForm.addEventListener('submit', function(e){
+        e.preventDefault();
+        if (newHeaderText.value.length > 0) {
+            store.dispatch({ type: 'CHANGE_HEADER' })
+            store.dispatch({ type: 'INCREMENT' })
+            changeHeaderForm.reset();
+        }
+    });
+        
+    </script>
+  </body>
+</html>
